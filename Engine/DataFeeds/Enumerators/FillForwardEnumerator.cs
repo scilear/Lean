@@ -17,6 +17,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using NodaTime;
 using QuantConnect.Data;
 using QuantConnect.Data.Market;
@@ -59,8 +60,16 @@ namespace QuantConnect.Lean.Engine.DataFeeds.Enumerators
         /// <param name="isExtendedMarketHours">True to use the exchange's extended market hours, false to use the regular market hours</param>
         /// <param name="subscriptionEndTime">The end time of the subscrition, once passing this date the enumerator will stop</param>
         /// <param name="dataResolution">The source enumerator's data resolution</param>
-        /// <param name="dataTimeZone">The time zone of the underying source data</param>
-        public FillForwardEnumerator(IEnumerator<BaseData> enumerator, SecurityExchange exchange, IReadOnlyRef<TimeSpan> fillForwardResolution, bool isExtendedMarketHours, DateTime subscriptionEndTime, TimeSpan dataResolution, DateTimeZone dataTimeZone)
+        /// <param name="dataTimeZone">The time zone of the underlying source data. This is used for rounding calculations and
+        /// is NOT the time zone on the BaseData instances (unless of course data time zone equals the exchange time zone)</param>
+        public FillForwardEnumerator(IEnumerator<BaseData> enumerator,
+            SecurityExchange exchange,
+            IReadOnlyRef<TimeSpan> fillForwardResolution,
+            bool isExtendedMarketHours,
+            DateTime subscriptionEndTime,
+            TimeSpan dataResolution,
+            DateTimeZone dataTimeZone
+            )
         {
             _subscriptionEndTime = subscriptionEndTime;
             Exchange = exchange;
@@ -231,44 +240,53 @@ namespace QuantConnect.Lean.Engine.DataFeeds.Enumerators
             }
 
             // check to see if the gap between previous and next warrants fill forward behavior
-            if (next.Time - previous.Time <= fillForwardResolution)
+            var nextPreviousTimeDelta = next.Time - previous.Time;
+            if (nextPreviousTimeDelta <= fillForwardResolution && nextPreviousTimeDelta <= _dataResolution)
             {
                 fillForward = null;
                 return false;
             }
 
-            // is the bar after previous in market hours?
-            var barAfterPreviousEndTime = previous.EndTime + fillForwardResolution;
-            if (Exchange.IsOpenDuringBar(previous.EndTime, barAfterPreviousEndTime, _isExtendedMarketHours))
-            {
-                // this is the normal case where we had a hole in the middle of the day
-                fillForward = previous.Clone(true);
-                fillForward.Time = (previous.Time + fillForwardResolution).RoundDown(fillForwardResolution);
-                fillForward.EndTime = fillForward.Time + _dataResolution;
-                return true;
-            }
+            // every bar emitted MUST be of the data resolution.
 
-            // find the next fill forward time after the next market open
-            var nextFillForwardTime = Exchange.Hours.GetNextMarketOpen(previous.EndTime, _isExtendedMarketHours) + fillForwardResolution;
+            // compute end times of the four potential fill forward scenarios
+            // 1. the next fill forward bar. 09:00-10:00 followed by 10:00-11:00 where 01:00 is the fill forward resolution
+            // 2. the next data resolution bar, same as above but with the data resolution instead
+            // 3. the next fill forward bar following the next market open, 15:00-16:00 followed by 09:00-10:00 the following open market day
+            // 4. the next data resolution bar following thenext market open, same as above but with the data resolution instead
 
-            if (_dataResolution == Time.OneDay)
+            // the precedence for validation is based on the order of the end times, obviously if a potential match
+            // is before a later match, the earliest match should win.
+
+            var nextDataBarEndTime = RoundDown(previous.EndTime + _dataResolution, _dataResolution);
+            var nextFillForwardBarEndTime = RoundDown(previous.EndTime + fillForwardResolution, fillForwardResolution);
+            var nextMarketOpen = Exchange.Hours.GetNextMarketOpen(previous.EndTime, _isExtendedMarketHours);
+            var nextMarkOpenFillForwardBarEndTime = RoundDown(nextMarketOpen + fillForwardResolution, fillForwardResolution);
+            var nextMarketOpenDataBarEndTime = RoundDown(nextMarketOpen + _dataResolution, _dataResolution);
+
+            var sorted = new[]
             {
-                // special case for daily, we need to emit a midnight bar even though markets are closed
-                var dailyBarEnd = GetNextOpenDateAfter(previous.Time.Date) + Time.OneDay;
-                if (dailyBarEnd < nextFillForwardTime)
+                new {EndTime = nextFillForwardBarEndTime,           Interval = fillForwardResolution},
+                new {EndTime = nextDataBarEndTime,                  Interval = _dataResolution},
+                new {EndTime = nextMarkOpenFillForwardBarEndTime,   Interval = fillForwardResolution},
+                new {EndTime = nextMarketOpenDataBarEndTime,        Interval = _dataResolution}
+            };
+            Array.Sort(sorted, (l,r) => l.EndTime.CompareTo(r.EndTime));
+
+            foreach (var item in sorted)
+            {
+                var potentialBarEndTime = item.EndTime;
+                if (potentialBarEndTime < next.EndTime)
                 {
-                    // only emit the midnight bar if it's the next bar to be emitted
-                    nextFillForwardTime = dailyBarEnd;
+                    var nextFillForwardBarStartTime = potentialBarEndTime - item.Interval;
+                    if (Exchange.IsOpenDuringBar(nextFillForwardBarStartTime, potentialBarEndTime, _isExtendedMarketHours))
+                    {
+                        fillForward = previous.Clone(true);
+                        fillForward.Time = potentialBarEndTime - _dataResolution; // bar are ALWAYS of the data resolution
+                        fillForward.EndTime = potentialBarEndTime;
+                        return true;
+                    }
                 }
-            }
-
-            if (nextFillForwardTime < next.EndTime)
-            {
-                // if next is still in the future then we need to emit a fill forward for market open
-                fillForward = previous.Clone(true);
-                fillForward.Time = (nextFillForwardTime - _dataResolution).RoundDown(fillForwardResolution);
-                fillForward.EndTime = fillForward.Time + _dataResolution;
-                return true;
             }
 
             // the next is before the next fill forward time, so do nothing
@@ -276,17 +294,9 @@ namespace QuantConnect.Lean.Engine.DataFeeds.Enumerators
             return false;
         }
 
-        /// <summary>
-        /// Finds the next open date that follows the specified date, this functions expects a date, not a date time
-        /// </summary>
-        private DateTime GetNextOpenDateAfter(DateTime date)
+        private DateTime RoundDown(DateTime value, TimeSpan interval)
         {
-            do
-            {
-                date = date + Time.OneDay;
-            }
-            while (!Exchange.DateIsOpen(date));
-            return date;
+            return value.RoundDownInTimeZone(interval, Exchange.TimeZone, _dataTimeZone);
         }
     }
 }
