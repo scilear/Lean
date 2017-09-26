@@ -40,11 +40,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantConnect.Api", "Api\Qua
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantConnect.Views", "UserInterface\QuantConnect.Views.csproj", "{C68BEEED-B0C0-4002-94D4-1E871133D02A}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "QuantConnect.Algorithm.FSharp", "Algorithm.FSharp\QuantConnect.Algorithm.FSharp.fsproj", "{7702711A-0C09-40D4-B151-E308D1520738}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantConnect.Algorithm.CSharp", "Algorithm.CSharp\QuantConnect.Algorithm.CSharp.csproj", "{39A81C16-A1E8-425E-A8F2-1433ADB80228}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantConnect.Algorithm.Python", "Algorithm.Python\QuantConnect.Algorithm.Python.csproj", "{48289996-CE56-4EDF-B451-4A2B1519EBC3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{93A63A28-9326-4E26-9930-0FDBC26B9A91}"
 	ProjectSection(SolutionItems) = preProject
@@ -53,11 +49,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{93A63A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantConnect.ToolBox", "ToolBox\QuantConnect.ToolBox.csproj", "{AC9A142C-B485-44D7-91FF-015C22C43D05}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantConnect.VisualStudioPlugin", "VisualStudioPlugin\QuantConnect.VisualStudio17Plugin.csproj", "{5326A9FB-0270-4647-8C43-20C5607DB529}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantConnect.VisualStudio17Plugin", "VisualStudioPlugin\QuantConnect.VisualStudio17Plugin.csproj", "{5326A9FB-0270-4647-8C43-20C5607DB529}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantConnect.Jupyter", "Jupyter\QuantConnect.Jupyter.csproj", "{9561D14A-467E-40AD-928E-EE9F758D7D98}"
-EndProject
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "QuantConnect.Algorithm.PythonTools", "Algorithm.Python\QuantConnect.Algorithm.PythonTools.pyproj", "{4A5DED1F-3E34-40E2-B1F2-9A8A02195508}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantConnect.AlphAngel", "Algorithm.AlphAngel\QuantConnect.AlphAngel.csproj", "{B98794C7-DF6A-4670-88CC-70DC9DBEB226}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -161,28 +155,20 @@ Global
 		{C5D44209-49A0-4505-A870-043C5EF5FDDF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C5D44209-49A0-4505-A870-043C5EF5FDDF}.Release|x64.ActiveCfg = Release|x64
 		{C5D44209-49A0-4505-A870-043C5EF5FDDF}.Release|x64.Build.0 = Release|x64
-		{C68BEEED-B0C0-4002-94D4-1E871133D02A}.Debug|Any CPU.ActiveCfg = Release|Any CPU
-		{C68BEEED-B0C0-4002-94D4-1E871133D02A}.Debug|Any CPU.Build.0 = Release|Any CPU
+		{C68BEEED-B0C0-4002-94D4-1E871133D02A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C68BEEED-B0C0-4002-94D4-1E871133D02A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C68BEEED-B0C0-4002-94D4-1E871133D02A}.Debug|x64.ActiveCfg = Debug|x64
 		{C68BEEED-B0C0-4002-94D4-1E871133D02A}.Debug|x64.Build.0 = Debug|x64
 		{C68BEEED-B0C0-4002-94D4-1E871133D02A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C68BEEED-B0C0-4002-94D4-1E871133D02A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C68BEEED-B0C0-4002-94D4-1E871133D02A}.Release|x64.ActiveCfg = Release|x64
 		{C68BEEED-B0C0-4002-94D4-1E871133D02A}.Release|x64.Build.0 = Release|x64
-		{7702711A-0C09-40D4-B151-E308D1520738}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7702711A-0C09-40D4-B151-E308D1520738}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{7702711A-0C09-40D4-B151-E308D1520738}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7702711A-0C09-40D4-B151-E308D1520738}.Release|x64.ActiveCfg = Release|Any CPU
 		{39A81C16-A1E8-425E-A8F2-1433ADB80228}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{39A81C16-A1E8-425E-A8F2-1433ADB80228}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{39A81C16-A1E8-425E-A8F2-1433ADB80228}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{39A81C16-A1E8-425E-A8F2-1433ADB80228}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{39A81C16-A1E8-425E-A8F2-1433ADB80228}.Release|Any CPU.Build.0 = Release|Any CPU
 		{39A81C16-A1E8-425E-A8F2-1433ADB80228}.Release|x64.ActiveCfg = Release|Any CPU
-		{48289996-CE56-4EDF-B451-4A2B1519EBC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{48289996-CE56-4EDF-B451-4A2B1519EBC3}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{48289996-CE56-4EDF-B451-4A2B1519EBC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{48289996-CE56-4EDF-B451-4A2B1519EBC3}.Release|x64.ActiveCfg = Release|Any CPU
 		{AC9A142C-B485-44D7-91FF-015C22C43D05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AC9A142C-B485-44D7-91FF-015C22C43D05}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC9A142C-B485-44D7-91FF-015C22C43D05}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -195,20 +181,19 @@ Global
 		{5326A9FB-0270-4647-8C43-20C5607DB529}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5326A9FB-0270-4647-8C43-20C5607DB529}.Release|x64.ActiveCfg = Release|Any CPU
 		{5326A9FB-0270-4647-8C43-20C5607DB529}.Release|x64.Build.0 = Release|Any CPU
-		{9561D14A-467E-40AD-928E-EE9F758D7D98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9561D14A-467E-40AD-928E-EE9F758D7D98}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9561D14A-467E-40AD-928E-EE9F758D7D98}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{9561D14A-467E-40AD-928E-EE9F758D7D98}.Debug|x64.Build.0 = Debug|Any CPU
-		{9561D14A-467E-40AD-928E-EE9F758D7D98}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9561D14A-467E-40AD-928E-EE9F758D7D98}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9561D14A-467E-40AD-928E-EE9F758D7D98}.Release|x64.ActiveCfg = Release|Any CPU
-		{9561D14A-467E-40AD-928E-EE9F758D7D98}.Release|x64.Build.0 = Release|Any CPU
-		{4A5DED1F-3E34-40E2-B1F2-9A8A02195508}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4A5DED1F-3E34-40E2-B1F2-9A8A02195508}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{4A5DED1F-3E34-40E2-B1F2-9A8A02195508}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4A5DED1F-3E34-40E2-B1F2-9A8A02195508}.Release|x64.ActiveCfg = Release|Any CPU
+		{B98794C7-DF6A-4670-88CC-70DC9DBEB226}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B98794C7-DF6A-4670-88CC-70DC9DBEB226}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B98794C7-DF6A-4670-88CC-70DC9DBEB226}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B98794C7-DF6A-4670-88CC-70DC9DBEB226}.Debug|x64.Build.0 = Debug|Any CPU
+		{B98794C7-DF6A-4670-88CC-70DC9DBEB226}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B98794C7-DF6A-4670-88CC-70DC9DBEB226}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B98794C7-DF6A-4670-88CC-70DC9DBEB226}.Release|x64.ActiveCfg = Release|Any CPU
+		{B98794C7-DF6A-4670-88CC-70DC9DBEB226}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6BF51D26-9B2F-401F-912B-99A04AA04870}
 	EndGlobalSection
 EndGlobal

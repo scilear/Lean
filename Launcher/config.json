@@ -6,16 +6,19 @@
   // two predefined environments, 'backtesting' and 'live', feel free
   // to add more!
 
-  "environment": "backtesting",// "live-paper", "backtesting", "live-interactive", "live-interactive-iqfeed"
+  //"environment": "backtesting", // "live-paper", "backtesting", "live-interactive", "live-interactive-iqfeed"
+  "environment": "backtesting-desktop", // "live-paper", "backtesting", "live-interactive", "live-interactive-iqfeed"
 
   // algorithm class selector
-  "algorithm-type-name": "BasicTemplateAlgorithm",
+  //"algorithm-type-name": "AaPullbackFutures",
+  "algorithm-type-name": "MultiAllocationTest",
+
 
   // Algorithm language selector - options CSharp, FSharp, VisualBasic, Python, Java
   "algorithm-language": "CSharp",
 
   //Physical DLL location
-  "algorithm-location": "QuantConnect.Algorithm.CSharp.dll",
+  "algorithm-location": "QuantConnect.AlphAngel.dll",
   //"algorithm-location": "../../../Algorithm.Python/BasicTemplateAlgorithm.py",
   //"algorithm-location": "QuantConnect.Algorithm.FSharp.dll",
   //"algorithm-location": "QuantConnect.Algorithm.VisualBasic.dll",
@@ -34,7 +37,7 @@
   "data-provider": "QuantConnect.Lean.Engine.DataFeeds.DefaultDataProvider",
 
   // limits on number of symbols to allow
-  "symbol-minute-limit": 10000, 
+  "symbol-minute-limit": 10000,
   "symbol-second-limit": 10000,
   "symbol-tick-limit": 10000,
 
@@ -46,8 +49,8 @@
   "transaction-log": "",
 
   // To get your api access token go to quantconnect.com/account
-  "job-user-id": "0",
-  "api-access-token": "",
+  "job-user-id": "27367",
+  "api-access-token": "bf0ebdaf6bff1797febd4ac7f58360ed",
 
   // live data configuration
   "live-data-url": "ws://www.quantconnect.com/api/v2/live/data/",
@@ -55,14 +58,14 @@
 
   // interactive brokers configuration
   "ib-account": "",
-  "ib-user-name": "",
-  "ib-password": "",
+  "ib-user-name": "fabien777",
+  "ib-password": "ibwttjwgfag1",
   "ib-host": "127.0.0.1",
   "ib-port": "4002",
   "ib-agent-description": "Individual",
   "ib-use-tws": false,
   "ib-tws-dir": "C:\\Jts",
-  "ib-trading-mode": "paper", 
+  "ib-trading-mode": "paper",
   "ib-controller-dir": "C:\\IBController",
 
   // tradier configuration
@@ -150,17 +153,17 @@
 
     // defines the 'live-interactive' environment
     "live-interactive": {
-        "live-mode": true,
+      "live-mode": true,
 
-        // real brokerage implementations require the BrokerageTransactionHandler
-        "live-mode-brokerage": "InteractiveBrokersBrokerage",
-        "setup-handler": "QuantConnect.Lean.Engine.Setup.BrokerageSetupHandler",
-        "result-handler": "QuantConnect.Lean.Engine.Results.LiveTradingResultHandler",
-        "data-feed-handler": "QuantConnect.Lean.Engine.DataFeeds.LiveTradingDataFeed",
-        "data-queue-handler": "QuantConnect.Brokerages.InteractiveBrokers.InteractiveBrokersBrokerage",
-        "real-time-handler": "QuantConnect.Lean.Engine.RealTime.LiveTradingRealTimeHandler",
-        "transaction-handler": "QuantConnect.Lean.Engine.TransactionHandlers.BrokerageTransactionHandler",
-        "history-provider": "BrokerageHistoryProvider"
+      // real brokerage implementations require the BrokerageTransactionHandler
+      "live-mode-brokerage": "InteractiveBrokersBrokerage",
+      "setup-handler": "QuantConnect.Lean.Engine.Setup.BrokerageSetupHandler",
+      "result-handler": "QuantConnect.Lean.Engine.Results.LiveTradingResultHandler",
+      "data-feed-handler": "QuantConnect.Lean.Engine.DataFeeds.LiveTradingDataFeed",
+      "data-queue-handler": "QuantConnect.Brokerages.InteractiveBrokers.InteractiveBrokersBrokerage",
+      "real-time-handler": "QuantConnect.Lean.Engine.RealTime.LiveTradingRealTimeHandler",
+      "transaction-handler": "QuantConnect.Lean.Engine.TransactionHandlers.BrokerageTransactionHandler",
+      "history-provider": "BrokerageHistoryProvider"
     },
 
     // defines the 'live-interactive-iqfeed' environment
