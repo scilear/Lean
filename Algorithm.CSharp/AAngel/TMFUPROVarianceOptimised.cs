@@ -1,60 +1,25 @@
 using System;
-using QuantConnect.Algorithm.CSharp.AAngel;
+using System.Collections.Generic;
+using System.Linq;
 using QuantConnect.Data;
-using QuantConnect.Data.Consolidators;
-using QuantConnect.Data.Market;
+using QuantConnect.Orders;
+using QuantConnect.Algorithm.CSharp.AAngel;
 using QuantConnect.Indicators;
+
+//deal with vxx time switch
 
 namespace QuantConnect.Algorithm.CSharp
 {
-	public class TMFUPROVarianceOptimised : SubAlgo
+    public class TMFUPROVarianceOptimisedAlgo : SubAlgo
     {
-	    protected override string GetName()
+	    private bool USE_LIMIT = false;
+	    public TMFUPROVarianceOptimisedAlgo(QCAlgorithm algo)
+		    : base(algo)
 	    {
-		    return $"TMFUPROVarianceOptimised";
-	    } 	
-        public TMFUPROVarianceOptimised(QCAlgorithm algorithm)
-            : base(algorithm)
-        {
-	        
-        }
-		
-		
-        
-        public override void Initialize()
-        {
-            
-	        
-        }
-	
-		
-        
-		
-
-
-        public override void OnData(Slice data)
-        {
-        	
-	        
-        }
-
-
-        void PrintState()
-	    {
-	    	if (LiveMode)
-	    	{
-	    		Log($"*********** {GetName()} **************");
-	    		//Log($"{Time} OnWeek5 ma ready {ma.IsReady}, Close>ma: {Securities[SYM].Price > ma}");
-	    	}
 	    }
-    }
-    /*
-     
-         public class TMFUPROVarianceOptimisedAlgo : SubAlgo
-    {
-    	protected string GetName()
+    	protected override string GetName()
     	{
-    		return "MinVarAlgo";
+    		return "TMFUPROVarianceOptimisedAlgo";
     	}
     	// ##### ALGO PARAM ############
     	private int allocationFrequency = 15;
@@ -71,7 +36,7 @@ namespace QuantConnect.Algorithm.CSharp
         BollingerBands bbc;
         
         
-        public void Initialize()
+        public override void Initialize()
         {
             //SetStartDate(2010, 3, 1);
             //SetEndDate(2020, 2, 15);
@@ -80,7 +45,7 @@ namespace QuantConnect.Algorithm.CSharp
             
             //SetCash(REF_CASH);
 
-            SetWarmup(TimeSpan.FromDays(45));
+            //SetWarmup(TimeSpan.FromDays(45));
 
             var ref_etf = "UPRO";
             // stocks.Add("TMF");
@@ -91,10 +56,10 @@ namespace QuantConnect.Algorithm.CSharp
             }
             
 			AddEquity("VXX", Resolution.Minute);
-            bb = BB("VXX", 20, 2m, MovingAverageType.Exponential, Resolution.Daily);
+            bb = Algo.BB("VXX", 20, 2m, MovingAverageType.Exponential, Resolution.Daily);
             //bbc = BB("UPRO", 100, 2m, MovingAverageType.Exponential, Resolution.Daily, x => (decimal)GetCorrel());
 			if (!LiveMode) AddEquity("VXX.1", Resolution.Minute);
-            if (!LiveMode) bb1 = BB("VXX.1", 20, 2m, MovingAverageType.Exponential, Resolution.Daily);
+            if (!LiveMode) bb1 = Algo.BB("VXX.1", 20, 2m, MovingAverageType.Exponential, Resolution.Daily);
             
             int c = stocks.Count;
             weights = new double[c];
@@ -118,7 +83,7 @@ namespace QuantConnect.Algorithm.CSharp
         // bool reallocateCheck = false;
 
 		bool canAllocate = true;
-        public void OnData(Slice data)
+        public override void OnData(Slice data)
         {
         	// if (Time > new DateTime(2018,1,18,0,0,0) && stocks.Contains("VXX.1") )
         	// {
@@ -255,11 +220,12 @@ namespace QuantConnect.Algorithm.CSharp
             	return;
             }
             Log("Trade weights: " + string.Join(",", weights));
-            var factor = BasicTemplateAlgorithm.VAROPTI_REF_CASH / (double)Portfolio.TotalPortfolioValue;
+            //var factor = 1m;//BasicTemplateAlgorithm.VAROPTI_REF_CASH / (double)Portfolio.TotalPortfolioValue;
             for (int i = 0; i < weights.Count(); i++)
             {
             	var s = stocks.ElementAt(i);
-            	var qty = CalculateOrderQuantity(s, weights[i] * factor);
+                SetHoldings(s, (decimal)weights[i]);
+            	/*var qty = CalculateOrderQuantity(s, weights[i] * factor);
             	if (qty!=0) 
             	{
             		if (USE_LIMIT)
@@ -270,7 +236,7 @@ namespace QuantConnect.Algorithm.CSharp
             		{
             			MarketOrder(s, qty);
             		}
-            	}
+            	}*/
                 //SetHoldings(stocks.ElementAt(i), weights[i]);
             }
         }
@@ -386,12 +352,7 @@ namespace QuantConnect.Algorithm.CSharp
             }
             Log("#########################################");
         }
-        
+
+
     }
-     
-     */
-
-    
-	
-
 }
