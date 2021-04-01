@@ -241,8 +241,14 @@ namespace QuantConnect.Algorithm.CSharp
             }
         }
 
+		// override public int Test1()
+		// {
+		// 	return 2;
+			
+		// }
 		bool Valid = false;
-        public void OnEndOfDayVarOptimised()
+		override public void OnEndOfDay()
+        //public void OnEndOfDay()
         {
         	Log("OnEndOfDayVarOptimised");
             //allocate++;
