@@ -143,7 +143,10 @@ namespace QuantConnect.Algorithm.CSharp
         	}
         }*/
 
-
+		protected override void OnDeactivatedStrategy()
+		{
+			
+		}
 	    
 	    void PrintAllWeatherState()
 	    {
