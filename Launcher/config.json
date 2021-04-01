@@ -9,7 +9,10 @@
   "environment": "backtesting", // "live-paper", "backtesting", "live-interactive", "live-interactive-iqfeed"
 
   // algorithm class selector
-  "algorithm-type-name": "BasicTemplateFrameworkAlgorithm",
+  //"algorithm-type-name": "TestAlgo",
+    "algorithm-type-name": "PortfolioMixer",
+
+  //  "algorithm-type-name": "MACDTrendAlgorithm",
 
   // Algorithm language selector - options CSharp, Python
   "algorithm-language": "CSharp",
@@ -35,7 +38,8 @@
   "api-handler": "QuantConnect.Api.Api",
   "map-file-provider": "QuantConnect.Data.Auxiliary.LocalDiskMapFileProvider",
   "factor-file-provider": "QuantConnect.Data.Auxiliary.LocalDiskFactorFileProvider",
-  "data-provider": "QuantConnect.Lean.Engine.DataFeeds.DefaultDataProvider",
+  //"data-provider": "QuantConnect.Lean.Engine.DataFeeds.DefaultDataProvider",
+  "data-provider": "QuantConnect.Lean.Engine.DataFeeds.ApiDataProvider",
   "alpha-handler": "QuantConnect.Lean.Engine.Alphas.DefaultAlphaHandler",
   "data-channel-provider": "DataChannelProvider",
   "object-store": "QuantConnect.Lean.Engine.Storage.LocalObjectStore",
@@ -47,18 +51,18 @@
   "symbol-tick-limit": 10000,
 
   // limits the amount of data points per chart series. Applies only for backtesting
-  "maximum-data-points-per-chart-series": 4000,
+  "maximum-data-points-per-chart-series": 100000,
 
   // if one uses true in following token, market hours will remain open all hours and all days.
   // if one uses false will make lean operate only during regular market hours.
   "force-exchange-always-open": false,
 
   // save list of transactions to the specified csv file
-  "transaction-log": "",
+  "transaction-log": "transaction.csv",
 
   // To get your api access token go to quantconnect.com/account
-  "job-user-id": "0",
-  "api-access-token": "",
+  "job-user-id": "27367",
+  "api-access-token": "bf0ebdaf6bff1797febd4ac7f58360ed",
 
   // live data configuration
   "live-data-url": "ws://www.quantconnect.com/api/v2/live/data/",

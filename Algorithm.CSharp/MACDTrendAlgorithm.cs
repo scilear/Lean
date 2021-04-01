@@ -31,17 +31,17 @@ namespace QuantConnect.Algorithm.CSharp
     {
         private DateTime _previous;
         private MovingAverageConvergenceDivergence _macd;
-        private readonly string _symbol = "SPY";
+        private readonly string _symbol = "EURGBP";
 
         /// <summary>
         /// Initialise the data and resolution required, as well as the cash and start-end dates for your algorithm. All algorithms must initialized.
         /// </summary>
         public override void Initialize()
         {
-            SetStartDate(2004, 01, 01);
+            SetStartDate(2014, 01, 01);
             SetEndDate(2015, 01, 01);
 
-            AddSecurity(SecurityType.Equity, _symbol, Resolution.Daily);
+            AddSecurity(SecurityType.Forex, _symbol, Resolution.Daily);
 
             // define our daily macd(12,26) with a 9 day signal
             _macd = MACD(_symbol, 12, 26, 9, MovingAverageType.Exponential, Resolution.Daily);
@@ -51,8 +51,10 @@ namespace QuantConnect.Algorithm.CSharp
         /// OnData event is the primary entry point for your algorithm. Each new data point will be pumped in here.
         /// </summary>
         /// <param name="data">TradeBars IDictionary object with your stock data</param>
-        public void OnData(TradeBars data)
+        public void OnData(QuoteBars data)
         {
+            SetHoldings(_symbol, 1);
+            return;
             // only once per day
             if (_previous.Date == Time.Date) return;
 
@@ -61,7 +63,7 @@ namespace QuantConnect.Algorithm.CSharp
             var holding = Portfolio[_symbol];
 
             var signalDeltaPercent = (_macd - _macd.Signal)/_macd.Fast;
-            var tolerance = 0.0025m;
+            var tolerance = 0.00025m;
 
             // if our macd is greater than our signal, then let's go long
             if (holding.Quantity <= 0 && signalDeltaPercent > tolerance) // 0.01%

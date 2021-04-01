@@ -15,6 +15,17 @@
 
 using QuantConnect.Data;
 using System;
+using System;
+using System.Collections.Generic;
+using QuantConnect.Data.Auxiliary;
+using QuantConnect.Data.Market;
+using QuantConnect.Indicators;
+using QuantConnect.Interfaces;
+using QuantConnect.Securities;
+
+using System.Reflection;
+using QuantConnect.Data;
+using QuantConnect.Lean.Engine.TransactionHandlers;
 
 namespace QuantConnect.Algorithm.CSharp
 {
@@ -28,31 +39,70 @@ namespace QuantConnect.Algorithm.CSharp
     /// <meta name="tag" content="forex" />
     public class BasicTemplateForexAlgorithm : QCAlgorithm
     {
+
+        public BasicTemplateForexAlgorithm()
+        {
+             int stop = 1;
+        }
         /// <summary>
         /// Initialise the data and resolution required, as well as the cash and start-end dates for your algorithm. All algorithms must initialized.
-        /// </summary>
+        /// </summary
+        /// 
+        QCAlgorithm algorithm;
         public override void Initialize()
-        {
+        { 
             SetStartDate(2014, 5, 7);  //Set Start Date
             SetEndDate(2014, 5, 15);    //Set End Date
             SetCash(100000);             //Set Strategy Cash
             // Find more symbols here: http://quantconnect.com/data
-            AddForex("EURUSD");
-            AddForex("NZDUSD");
+            //AddForex("EURUSD", Resolution.Minute);
+            //AddForex("EURUSD", Resolution.Minute);
 
-            var dailyHistory = History(5, Resolution.Daily);
-            var hourHistory = History(5, Resolution.Hour);
-            var minuteHistory = History(5, Resolution.Minute);
-            var secondHistory = History(5, Resolution.Second);
+            //var dailyHistory = History(5, Resolution.Daily);
+            //var hourHistory = History(5, Resolution.Hour);
+            //var minuteHistory = History(5, Resolution.Minute);
+            //var secondHistory = History(5, Resolution.Second);
+            algorithm = new QCAlgorithm();
+            //algorithm.Initialize();
 
-            // Log values from history request of second-resolution data
-            foreach (var data in secondHistory)
-            {
-                foreach (var key in data.Keys)
-                {
-                    Log(key.Value + ": " + data.Time + " > " + data[key].Value);
-                }
-            }
+
+            // new forex - should be quotebar
+            algorithm.SubscriptionManager = SubscriptionManager;
+            //algorithm.Securities.SetSecurityService(Securities.SetSecurityService);
+            var symbolPropertiesDatabase = SymbolPropertiesDatabase.FromDataFolder();
+            //var mapFilePrimaryExchangeProvider = new MapFilePrimaryExchangeProvider(AlgorithmHandlers.MapFileProvider);
+            var registeredTypesProvider = new RegisteredSecurityDataTypesProvider();
+
+            Type typSecurityManager = typeof(SecurityManager);
+            FieldInfo typeAccessSecurityManager = typSecurityManager.GetField("_securityService", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var sm = (SecurityService)typeAccessSecurityManager.GetValue(Securities);
+
+
+            // Type typSecurityService = typeof(SecurityService);
+            // FieldInfo typeAccessSecurityService = typSecurityService.GetField("_primaryExchangeProvider", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            // var ss = typeAccessSecurityService.GetValue(sm);
+
+            //algorithm.Securities.SetSecurityService(sm);
+            algorithm.Securities = Securities;
+            algorithm.Portfolio.Securities = Securities;
+
+
+            /*
+            var securityService = new SecurityService(algorithm.Portfolio.CashBook,
+                marketHoursDatabase,
+                symbolPropertiesDatabase,
+                algorithm,
+                registeredTypesProvider,
+                new SecurityCacheProvider(algorithm.Portfolio),
+                mapFilePrimaryExchangeProvider);*/
+
+            AddForex("EURUSD", Resolution.Minute);
+            var forexQuote = algorithm.AddForex("EURUSD", Resolution.Minute);
+            // Assert.IsTrue(forexQuote.Subscriptions.Count() == 1);
+            // Assert.IsTrue(GetMatchingSubscription(forexQuote, typeof(TradeBar)) != null);
+            algorithm.Transactions.SetOrderProcessor(new BacktestingTransactionHandler());
+            algorithm.Portfolio.Transactions = algorithm.Transactions;
+            algorithm.PostInitialize();
         }
 
         /// <summary>
@@ -61,11 +111,12 @@ namespace QuantConnect.Algorithm.CSharp
         /// <param name="data">Slice object keyed by symbol containing the stock data</param>
         public override void OnData(Slice data)
         {
-            if (!Portfolio.Invested)
+            if (!algorithm.Portfolio.Invested)
             {
-                SetHoldings("EURUSD", .5);
-                SetHoldings("NZDUSD", .5);
-                Log(string.Join(", ", data.Values));
+                //if (data.QuoteBars.ContainsKey("EURUSD")) SetHoldings("EURUSD", .5);
+                if (data.QuoteBars.ContainsKey("EURUSD")) 
+                    algorithm.SetHoldings("EURUSD", .5);
+                //Log(string.Join(", ", data.Values));
             }
         }
     }

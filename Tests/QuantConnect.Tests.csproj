@@ -304,6 +304,20 @@
     <None Update="TestData\spy_arima.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Compile Remove="Algorithm\AlgorithmAddDataTests.cs" />
+    <Compile Remove="Common\Data\SubscriptionManagerTests.cs" />
+    <Compile Remove="Common\Orders\Fills\PartialMarketFillModelTests.cs" />
+    <Compile Remove="Common\Securities\SecurityCacheTests.cs" />
+    <Compile Remove="Common\Securities\SecurityIdentifierTests.cs" />
+    <Compile Remove="Common\Util\LeanDataTests.cs" />
+    <Compile Remove="Common\SymbolCacheTests.cs" />
+    <Compile Remove="Engine\BrokerageTransactionHandlerTests\BrokerageTransactionHandlerTests.cs" />
+    <Compile Remove="Engine\DataFeeds\CustomLiveDataFeedTests.cs" />
+    <Compile Remove="Engine\DataFeeds\DataPermissionManagerTests.cs" />
+    <Compile Remove="Engine\DataFeeds\TimeSliceTests.cs" />
+    <Compile Remove="RegressionTests.cs" />
+    <Compile Remove="Common\Packets\BacktestNodePacketTests.cs" />
+    <Compile Remove="Engine\BrokerageTransactionHandlerTests\BacktestingTransactionHandlerTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Algorithm.CSharp\QuantConnect.Algorithm.CSharp.csproj" />
@@ -480,5 +494,8 @@
     <Content Include="TestData\test_forex_fills_mch_quantity.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Engine\BrokerageTransactionHandlerTests" />
   </ItemGroup>
 </Project>
