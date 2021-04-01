@@ -145,7 +145,7 @@ namespace QuantConnect.Algorithm.CSharp
 
 		protected override void OnDeactivatedStrategy()
 		{
-			
+			Portfolio.LiquidateReplica();
 		}
 	    
 	    void PrintAllWeatherState()

@@ -12,7 +12,7 @@ namespace QuantConnect.Algorithm.CSharp
 {
     public class TMFUPROVarianceOptimisedAlgo : SubAlgo
     {
-	    private bool USE_LIMIT = false;
+	    //private bool USE_LIMIT = false;
 	    public TMFUPROVarianceOptimisedAlgo(QCAlgorithm algo)
 		    : base(algo)
 	    {
@@ -28,12 +28,12 @@ namespace QuantConnect.Algorithm.CSharp
     	
         private HashSet<string> stocks = new HashSet<string>(){"UPRO", "TMF"};
 		private bool allocationTime = false;
-        private int allocate = 0;
+        //private int allocate = 0;
         private double[] weights;
         
         BollingerBands bb1;
         BollingerBands bb;
-        BollingerBands bbc;
+        //BollingerBands bbc;
         
         
         public override void Initialize()

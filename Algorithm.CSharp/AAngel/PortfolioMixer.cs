@@ -47,6 +47,9 @@ and reduce the quantities in PositionTracked or similarly increase existing posi
         /// 
 
         private Dictionary<Symbol, decimal> prevConfidence = new Dictionary<Symbol, decimal>();
+        
+        private Dictionary<string, decimal> strategyAllocation = new Dictionary<string, decimal>();
+        
         public override void Initialize()
         {
             
@@ -56,21 +59,39 @@ and reduce the quantities in PositionTracked or similarly increase existing posi
             int CASH = 1000000;
 
             SetCash(CASH);
-            SetWarmup(TimeSpan.FromDays(180));
+            //SetWarmup(TimeSpan.FromDays(180));
+            SetWarmup(TimeSpan.FromDays(30*12));
 
-            
-            algos.Add(new SubAlgoValidator(new AllWeatherAlgo(this), 
+            SubAlgo algo = new AllWeatherAlgo(this);
+            algos.Add(new SubAlgoValidator(algo, 
                 TimeSpan.FromDays(1), 
                 new Dictionary<string, IIndicator>()
                 { {"SMA2", new ExponentialMovingAverage(4)},
-                    {"SMA10", new ExponentialMovingAverage(20)}},
-                (algo) =>
+                    {"SMA10", new ExponentialMovingAverage(200)}},
+                (a) =>
                 {
-                    //return 1;
-                    if (algo.GetIndicator("SMA2") >= algo.GetIndicator("SMA10"))
+                    return 1;
+                    if (a.GetIndicator("SMA2") >= a.GetIndicator("SMA10"))
                         return 1m;
                     return 0;
                 }));
+            strategyAllocation[algo.Name] = 0.75m;
+            
+            
+            algo = new TMFUPROVarianceOptimisedAlgo(this);
+            algos.Add(new SubAlgoValidator(new TMFUPROVarianceOptimisedAlgo(this), 
+                TimeSpan.FromDays(1), 
+                new Dictionary<string, IIndicator>()
+                { {"SMA2", new ExponentialMovingAverage(4)},
+                    {"SMA10", new ExponentialMovingAverage(200)}},
+                (a) =>
+                {
+                    return 1;
+                    if (a.GetIndicator("SMA2") >= a.GetIndicator("SMA10"))
+                        return 1m;
+                    return 0;
+                }));
+            strategyAllocation[algo.Name] = 0.25m;
             
             foreach (var a in algos)
             {
@@ -92,8 +113,8 @@ and reduce the quantities in PositionTracked or similarly increase existing posi
                     Console.WriteLine(data[a.Algo.Name].PnL);
                 }
 
-                var strategyWeight = 0.5m; // TODO fancy logic needed here
-                foreach(var kv in a.Algo.Positions)
+                var strategyWeight = strategyAllocation[a.Algo.Name]; // TODO fancy logic needed here
+                foreach(var kv in a.Algo.Portfolio.Positions)
                 {
                     List<PositionChanges> trades = kv.Value.Changes;
                     foreach(var t in trades)
@@ -131,16 +152,18 @@ and reduce the quantities in PositionTracked or similarly increase existing posi
 
         public override void OnEndOfDay()
         {
-            base.OnEndOfDay();
             foreach (var a in algos)
             {
                 var test = a.Algo.Portfolio.TotalPortfolioValue;
                 Plot(a.Algo.Name, "pnl", a.Algo.Portfolio.TotalPortfolioValue);
                 Plot(a.Algo.Name, "sma", a.GetIndicator("SMA2"));
                 Plot(a.Algo.Name, "sma10", a.GetIndicator("SMA10"));
-                Plot(a.Algo.Name, "PF", Portfolio.TotalPortfolioValue);
+                //Plot(a.Algo.Name, "PF", Portfolio.TotalPortfolioValue);
+                // var t1 = a.Algo.Test1();
+                // var t2 = ((TMFUPROVarianceOptimisedAlgo)a.Algo).Test1();
                 a.Algo.OnEndOfDay();
             }
+            base.OnEndOfDay();
         }
 
         public override void OnEndOfAlgorithm()

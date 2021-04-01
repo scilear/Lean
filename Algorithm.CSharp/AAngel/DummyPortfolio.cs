@@ -18,10 +18,11 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
         public decimal TotalPortfolioValue { get; private set; }
 
         private SecurityManager Securities;
-        private Dictionary<Symbol, Position> Positions = new Dictionary<Symbol, Position>();
+        public Dictionary<Symbol, Position> Positions { get; private set; }
 
         public DummyPortfolio(decimal startingCash, SecurityManager securities)
         {
+            Positions = new Dictionary<Symbol, Position>();
             SetCash(startingCash);
 
             Securities = securities;
@@ -84,7 +85,7 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
             }
             TotalPortfolioValue = portfolioValue + CashAccount;
         }
-
+        
         public void SetCash(decimal startingCash)
         {
             StartingCash = startingCash;
@@ -121,6 +122,14 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
                 {
                     //ignore nothing to do dividends are included in the price
                 }
+            }
+        }
+
+        public void LiquidateReplica()
+        {
+            foreach (var position in Positions)
+            {
+                position.Value.GenerateReplicaLiquidationChanges();
             }
         }
     }

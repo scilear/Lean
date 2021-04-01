@@ -29,7 +29,7 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
 {
     public abstract class SubAlgo : IAlgorithm
     {
-        public Dictionary<Symbol, PositionReplica> Positions = new Dictionary<Symbol, PositionReplica>();
+        //public Dictionary<Symbol, Position> Positions => Portfolio.Positions;
         protected QCAlgorithm Algo { get; private set; }
         public string Name { get { return GetName(); } set { string ignore = value; } }
         SecurityPortfolioManager IAlgorithm.Portfolio { get { return null; } }
@@ -63,13 +63,6 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
             var qty = CalculateOrderQuantity(symbol, weight);
             var tradePrice = (qty > 0) ? Securities[symbol].BidPrice : Securities[symbol].AskPrice;
             Portfolio.Trade(symbol, qty, tradePrice);
-
-            if (!Positions.ContainsKey(symbol))
-            {
-                Positions[symbol] = new PositionReplica();
-            }
-            Positions[symbol].Add(weight, qty);
-
         }
 
         public List<int> Liquidate(Symbol symbolToLiquidate = null, string tag = "Liquidated")

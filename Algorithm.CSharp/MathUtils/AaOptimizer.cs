@@ -44,7 +44,7 @@ namespace QuantConnect.Algorithm.CSharp
             };
 			
 			
-			var nbVar =3;
+			//var nbVar =3;
 			
 			//NelderMead algo = new NelderMead(f);
 			
