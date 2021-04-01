@@ -70,8 +70,8 @@
 
   // interactive brokers configuration
   "ib-account": "",
-  "ib-user-name": "",
-  "ib-password": "",
+  "ib-user-name": "fabien777",
+  "ib-password": "ibwttjwgfag1",
   "ib-host": "127.0.0.1",
   "ib-port": "4002",
   "ib-agent-description": "Individual",
