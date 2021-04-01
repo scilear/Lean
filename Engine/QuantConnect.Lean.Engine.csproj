@@ -135,5 +135,8 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+    <None Remove="mono_crash.24834af0bf.0.json" />
+    <None Remove="mono_crash.2530d91524.1.json" />
+    <None Remove="mono_crash.2530d91524.0.json" />
   </ItemGroup>
 </Project>
