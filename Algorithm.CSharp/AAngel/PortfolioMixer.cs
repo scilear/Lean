@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using QuantConnect.Data;
 using QuantConnect.Data.Market;
@@ -38,7 +38,7 @@ and reduce the quantities in PositionTracked or similarly increase existing posi
  * */
 
 
-    public class PortfolioMixer : QCAlgorithm
+    public partial class PortfolioMixer : QCAlgorithm
     {
         protected List<SubAlgoValidator> algos = new List<SubAlgoValidator>();
         /// <summary>
@@ -50,11 +50,12 @@ and reduce the quantities in PositionTracked or similarly increase existing posi
         
         private Dictionary<string, decimal> strategyAllocation = new Dictionary<string, decimal>();
         
-        public override void Initialize()
+/*
+	public override void Initialize()
         {
             
             // TODO: move all that in a Configuration static class, that calls set methods on Mixer 
-            SetStartDate(2020, 1, 1);  //Set Start Date
+            SetStartDate(2020, 3, 1);  //Set Start Date
             SetEndDate(2021, 3, 15);    //Set End Date
             int CASH = 1000000;
 
@@ -103,6 +104,7 @@ and reduce the quantities in PositionTracked or similarly increase existing posi
                 prevConfidence[a.Algo.Name] = 0;
             }
         }
+*/        
 
         
         public void OnData(Slice data)
