@@ -132,5 +132,13 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
                 position.Value.GenerateReplicaLiquidationChanges();
             }
         }
+        
+        public void RestartReplication()
+        {
+        	foreach (var position in Positions)
+            {
+                position.Value.RestartReplication();
+            }
+        }
     }
 }

@@ -56,9 +56,9 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
                     PositionChanges change = new PositionChanges
                     {
                         PositionId = PositionId,
-                        Type = PositionChanges.ChangeType.Increase,
+                        Type = (Replicated) ? PositionChanges.ChangeType.Increase : PositionChanges.ChangeType.Open,
                         //Symbol = Symbol,
-                        QuantityBefore = Quantity,
+                        QuantityBefore = (Replicated) ? Quantity : 0,
                         QuantityAfter = Quantity+qty,
 
                     };
@@ -97,9 +97,10 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
                             PositionChanges change = new PositionChanges
                             {
                                 PositionId = PositionId,
-                                Type = PositionChanges.ChangeType.Decrease,
+                                Type = (Replicated) ? PositionChanges.ChangeType.Decrease : PositionChanges.ChangeType.Open,
+                                
                                 //Symbol = Symbol,
-                                QuantityBefore = Quantity,
+                                QuantityBefore = (Replicated) ? Quantity : 0,
                                 QuantityAfter = Quantity+qty,
 
                             };
@@ -133,25 +134,58 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
             ReplicationWeight = weight;
             RealQuantity += quantity;
 
-            Replicated = true;
+			if (Quantity > 0 && RealQuantity < 0 || Quantity < 0 && RealQuantity > 0)
+			{
+				throw new Exception($"Replication mismatch on {symbol} Qty {Quantity} and Real Qty {RealQuantity}");
+			}
+			// FIX: if the Replication takes the quantity back to 0, 
+			// then we mark the position as non replicated so that it can resume properly
+			// and not send decrease signal to be misinterpreted in PortfolioMixer and taking the position negative
+            Replicated = (RealQuantity != 0);
         }
         public void DoneReplicating()
         {
             Changes.Clear();
         }
+        
+        public void RestartReplication()
+        {
+        	
+            if (RealQuantity != 0)
+            {
+            	//something was not right!
+            	throw new Exception($"Restarting replication with RealQuantity={RealQuantity} should be 0.");
+            	
+            }
+            Replicated = true;
+        }
 
         public void GenerateReplicaLiquidationChanges()
         {
-            PositionChanges change = new PositionChanges
-            {
-                PositionId = PositionId,
-                Type = PositionChanges.ChangeType.Close,
-                //Symbol = Symbol,
-                QuantityBefore = Quantity,
-                QuantityAfter = 0,
-
-            };
-            Changes.Add(change);
+        	//first remove Changes that may not have been processed as we do not want them on
+        	Changes.Clear();
+        	
+        	//then clear out any remaining position, 
+        	//if there was an opening in the changes it does not matter, we close on realQuantity
+        	//if there was a close, it will be done anyway!
+        	
+        	if (Replicated)
+        	{
+	            PositionChanges change = new PositionChanges
+	            {
+	                PositionId = PositionId,
+	                Type = PositionChanges.ChangeType.Close,
+	                //Symbol = Symbol,
+	                QuantityBefore = Quantity,
+	                QuantityAfter = 0,
+	
+	            };
+	            Changes.Add(change);
+	            //RealQuantity = 0;
+	            ReplicationWeight = 0;
+	            //RealQuantity = 0;
+        	}
+        	Replicated = false;
         }
     }
 }

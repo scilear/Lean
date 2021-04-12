@@ -97,6 +97,7 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
             return Algo.AddEquity(ticker, resolution, market, fillDataForward, leverage, extendedMarketHours);
         }
 
+	
         public void OnStrategyWeightChange(decimal oldWeight, decimal newWeight)
         {
             if (newWeight == 0)
@@ -112,7 +113,8 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
                 OnWeightDecrease(oldWeight, newWeight);
             }
         }
-
+		
+		
         protected virtual  void OnWeightDecrease(decimal oldWeight, decimal newWeight)
         {
             

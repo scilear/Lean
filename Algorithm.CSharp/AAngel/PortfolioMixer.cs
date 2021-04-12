@@ -54,7 +54,7 @@ and reduce the quantities in PositionTracked or similarly increase existing posi
         {
             
             // TODO: move all that in a Configuration static class, that calls set methods on Mixer 
-            SetStartDate(2010, 1, 1);  //Set Start Date
+            SetStartDate(2020, 1, 1);  //Set Start Date
             SetEndDate(2021, 3, 15);    //Set End Date
             int CASH = 1000000;
 
@@ -66,18 +66,21 @@ and reduce the quantities in PositionTracked or similarly increase existing posi
             algos.Add(new SubAlgoValidator(algo, 
                 TimeSpan.FromDays(1), 
                 new Dictionary<string, IIndicator>()
-                { {"SMA2", new ExponentialMovingAverage(4)},
-                    {"SMA10", new ExponentialMovingAverage(200)}},
+                { {"SMA2", new ExponentialMovingAverage(10)},
+                    {"SMA10", new ExponentialMovingAverage(100)}},
                 (a) =>
                 {
-                    return 1;
+                   // return 1;
                     if (a.GetIndicator("SMA2") >= a.GetIndicator("SMA10"))
                         return 1m;
                     return 0;
                 }));
-            strategyAllocation[algo.Name] = 0.75m;
+       
+            var allocTotal = 1m;
+            strategyAllocation[algo.Name] = 1m;
+            allocTotal -= strategyAllocation[algo.Name];
             
-            
+            /*
             algo = new TMFUPROVarianceOptimisedAlgo(this);
             algos.Add(new SubAlgoValidator(new TMFUPROVarianceOptimisedAlgo(this), 
                 TimeSpan.FromDays(1), 
@@ -86,13 +89,13 @@ and reduce the quantities in PositionTracked or similarly increase existing posi
                     {"SMA10", new ExponentialMovingAverage(200)}},
                 (a) =>
                 {
-                    return 1;
+                    //return 1;
                     if (a.GetIndicator("SMA2") >= a.GetIndicator("SMA10"))
                         return 1m;
                     return 0;
                 }));
-            strategyAllocation[algo.Name] = 0.25m;
-            
+            strategyAllocation[algo.Name] = allocTotal;
+            */
             foreach (var a in algos)
             {
                 a.Algo.SetCash(CASH);
@@ -116,19 +119,30 @@ and reduce the quantities in PositionTracked or similarly increase existing posi
                 var strategyWeight = strategyAllocation[a.Algo.Name]; // TODO fancy logic needed here
                 foreach(var kv in a.Algo.Portfolio.Positions)
                 {
+                    var ratio = a.GetConfidence();
+                    var prevRatio = prevConfidence[a.Algo.Name];
+                    
+                    if (ratio == 0 && prevRatio == 1)
+                    {
+                    	int stop =1;
+                    }
+                    if (ratio != prevRatio)
+                        a.Algo.OnStrategyWeightChange(prevRatio, ratio);
                     List<PositionChanges> trades = kv.Value.Changes;
                     foreach(var t in trades)
                     {
-                        var ratio = a.GetConfidence();
-                        var prevRatio = prevConfidence[a.Algo.Name];
-                        if (ratio != prevRatio)
-                            a.Algo.OnStrategyWeightChange(prevRatio, ratio);
+                    	// TODO : rounding issues with close position waiting to happen!!!
+                    	// PositionId reconcliation in OnOrder seems to be 
+                    	// the most efficient/safest way to deal with this
                         if (t.Type == PositionChanges.ChangeType.Close)
                         {
                             //TODO there is a need for reconciliation:
                             // to make this robust RealQuantity should come from a OnOrder Fill event ...
                             var closingQuantity = -kv.Value.RealQuantity;
-                            MarketOrder(kv.Key, closingQuantity);
+                            if (closingQuantity != 0)
+                            {
+                            	MarketOrder(kv.Key, closingQuantity, tag:t.Type.ToString());
+                            }
                             kv.Value.Replicate(0, closingQuantity);
                         }
                         else if (kv.Value.Replicated || t.Type == PositionChanges.ChangeType.Open)
@@ -137,14 +151,15 @@ and reduce the quantities in PositionTracked or similarly increase existing posi
                             var changeRatio = (t.Type == PositionChanges.ChangeType.Decrease) ? 1 : ratio;//in case of decrease we don't want it to be ignored
                             var quantity = t.GetAddedQuantity() * strategyWeight * changeRatio;
                             var weight = strategyWeight;// TODO not sure what to do with that, does not look to be useful yet (only on cash reallocation maybe
-                            if (quantity != 0 && (kv.Value.RealQuantity != 0 || t.Type == PositionChanges.ChangeType.Open))
+                            if (quantity != 0)// && (kv.Value.RealQuantity != 0 || t.Type == PositionChanges.ChangeType.Open))
                             {
-                                MarketOrder(kv.Key, quantity);
+                                MarketOrder(kv.Key, quantity, tag:t.Type.ToString());
                                 kv.Value.Replicate(weight, quantity);    
                             }
                         }
                     }
                     kv.Value.DoneReplicating();
+                    prevConfidence[a.Algo.Name] = a.GetConfidence();
                 }
                 //now we do a comparison of the strategy overall value versus the target weight
             }

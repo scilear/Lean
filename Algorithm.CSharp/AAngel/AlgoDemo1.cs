@@ -57,13 +57,13 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
             if (holding.Quantity <= 0 && signalDeltaPercent > tolerance) // 0.01%
             {
                 // longterm says buy as well
-                SetHoldings(_symbol, -1.0m);
+                SetHoldings(_symbol, 1.0m);
             }
             // of our macd is less than our signal, then let's go short
             else if (holding.Quantity >= 0 && signalDeltaPercent < -tolerance)
             {
                 //Liquidate(_symbol);
-                SetHoldings(_symbol, 1.0m);
+                SetHoldings(_symbol, -1.0m);
             }
 
             // plot both lines
