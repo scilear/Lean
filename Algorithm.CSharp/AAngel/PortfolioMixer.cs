@@ -75,7 +75,7 @@ and reduce the quantities in PositionTracked or similarly increase existing posi
                         return 1m;
                     return 0;
                 }));
-       
+            
             var allocTotal = 1m;
             strategyAllocation[algo.Name] = 1m;
             allocTotal -= strategyAllocation[algo.Name];

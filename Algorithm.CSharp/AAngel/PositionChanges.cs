@@ -1,4 +1,4 @@
-﻿namespace QuantConnect.Algorithm.CSharp.AAngel
+namespace QuantConnect.Algorithm.CSharp.AAngel
 {
     public class PositionChanges
     {
