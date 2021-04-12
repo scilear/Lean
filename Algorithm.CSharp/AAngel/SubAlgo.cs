@@ -523,7 +523,10 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
         {
             Algo.Plot(plot, graph, value);
         }
-        
+        protected void Plot(string plot, string graph, decimal value)
+        {
+            Algo.Plot(plot, graph, value);
+        }        
         public void Plot(string chart, Indicator first, Indicator second = null, Indicator third = null, Indicator fourth = null)
         {
             Algo.Plot(chart, new[] { first, second, third, fourth }.Where(x => x != null).ToArray());

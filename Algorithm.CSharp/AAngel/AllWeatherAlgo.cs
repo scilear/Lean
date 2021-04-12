@@ -127,9 +127,9 @@ namespace QuantConnect.Algorithm.CSharp
 			}
 			
 			SetHoldings("TLT", 0.4m * ratio * factor);
-			SetHoldings("IEF", 0.15m * ratio * factor);
-			SetHoldings("DBC", 0.075m * ratio * factor);
-			SetHoldings("GLD", 0.075m * ratio * factor);
+			// SetHoldings("IEF", 0.15m * ratio * factor);
+			// SetHoldings("DBC", 0.075m * ratio * factor);
+			// SetHoldings("GLD", 0.075m * ratio * factor);
 	    }
 	    
 	    /*void ManageOpenOrders()
@@ -142,8 +142,12 @@ namespace QuantConnect.Algorithm.CSharp
     			}
         	}
         }*/
-
-		protected override void OnDeactivatedStrategy()
+		
+		override protected void OnWeightIncrease(decimal oldWeight, decimal newWeight)
+		{
+			Portfolio.RestartReplication();
+		}
+		override protected void OnDeactivatedStrategy()
 		{
 			Portfolio.LiquidateReplica();
 		}

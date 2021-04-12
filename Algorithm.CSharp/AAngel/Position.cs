@@ -51,14 +51,15 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
             else
             {
                 var sameDirection= Math.Sign(Quantity / qty) == 1;
+                var replicationIsOn = (RealQuantity != 0);
                 if (sameDirection)
                 {
                     PositionChanges change = new PositionChanges
                     {
                         PositionId = PositionId,
-                        Type = (Replicated) ? PositionChanges.ChangeType.Increase : PositionChanges.ChangeType.Open,
+                        Type = (replicationIsOn) ? PositionChanges.ChangeType.Increase : PositionChanges.ChangeType.Open,
                         //Symbol = Symbol,
-                        QuantityBefore = (Replicated) ? Quantity : 0,
+                        QuantityBefore = (replicationIsOn) ? Quantity : 0,
                         QuantityAfter = Quantity+qty,
 
                     };
@@ -97,10 +98,10 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
                             PositionChanges change = new PositionChanges
                             {
                                 PositionId = PositionId,
-                                Type = (Replicated) ? PositionChanges.ChangeType.Decrease : PositionChanges.ChangeType.Open,
+                                Type = (replicationIsOn) ? PositionChanges.ChangeType.Decrease : PositionChanges.ChangeType.Open,
                                 
                                 //Symbol = Symbol,
-                                QuantityBefore = (Replicated) ? Quantity : 0,
+                                QuantityBefore = (replicationIsOn) ? Quantity : 0,
                                 QuantityAfter = Quantity+qty,
 
                             };

@@ -36,6 +36,8 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
             }
             //set { InnerList[i] = value; }
         }
+        
+        
         public void Trade(Symbol symbol, decimal qty, decimal tradePrice)
         {
             if (!Positions.ContainsKey(symbol))
@@ -139,6 +141,11 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
             {
                 position.Value.RestartReplication();
             }
+        }
+
+        public bool ContainsKey(string symbol)
+        {
+            return Positions.ContainsKey(symbol);
         }
     }
 }

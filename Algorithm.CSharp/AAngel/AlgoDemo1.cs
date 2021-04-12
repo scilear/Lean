@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using QuantConnect.Data;
 using QuantConnect.Indicators;
 
