@@ -1,3 +1,5 @@
+using System;
+
 namespace QuantConnect.Algorithm.CSharp.AAngel
 {
     public class PositionChanges
@@ -9,7 +11,7 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
         public decimal QuantityAfter{ get; set; }
         public decimal GetAddedQuantity()
         {
-            return QuantityAfter - QuantityBefore;
+            return Math.Round(QuantityAfter - QuantityBefore, 4);
         }
 
         public enum ChangeType

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using QuantConnect.Data;
 using QuantConnect.Data.Market;
@@ -56,13 +56,20 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
                 Positions[symbol] = new Position(symbol);
             }
 
-            var actual = Positions[symbol].GetMarketValue() / TotalPortfolioValue;
-            var toExecute = target - actual;
-
-            // TODO: deal multiplicator for futures, options,  etc...
-            // TODO: add bid ask & fees
-            var qty = (price > 0) ? TotalPortfolioValue * toExecute / price : 0;
-            return qty;
+        	if (target == 0)
+        	{
+				return -Positions[symbol].Quantity;
+        	}
+		else
+		{
+	            var actual = Positions[symbol].GetMarketValue() / TotalPortfolioValue;
+	            var toExecute = target - actual;
+	
+	            // TODO: deal multiplicator for futures, options,  etc...
+	            // TODO: add bid ask & fees
+	            var qty = (price > 0) ? TotalPortfolioValue * toExecute / price : 0;
+	            return qty;
+		}
         }
 
 

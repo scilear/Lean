@@ -45,7 +45,7 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
 
                 };
                 Changes.Add(change);
-                Quantity = qty;
+                Quantity = Math.Round(qty, 4);
                 averageCost = tradePrice;
             }
             else
@@ -60,7 +60,7 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
                         Type = (replicationIsOn) ? PositionChanges.ChangeType.Increase : PositionChanges.ChangeType.Open,
                         //Symbol = Symbol,
                         QuantityBefore = (replicationIsOn) ? Quantity : 0,
-                        QuantityAfter = Quantity+qty,
+                        QuantityAfter = Quantity = Math.Round(Quantity+qty, 4),
 
                     };
                     Changes.Add(change);
@@ -102,13 +102,13 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
                                 
                                 //Symbol = Symbol,
                                 QuantityBefore = (replicationIsOn) ? Quantity : 0,
-                                QuantityAfter = Quantity+qty,
+                                QuantityAfter = Quantity = Math.Round(Quantity+qty, 4),
 
                             };
                             Changes.Add(change);   
                         }
                         
-                        Quantity += qty;
+                        Quantity += Quantity = Math.Round(qty, 4);
                     }
                 }
             }

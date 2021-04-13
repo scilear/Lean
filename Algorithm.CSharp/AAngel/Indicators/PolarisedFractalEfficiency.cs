@@ -33,7 +33,7 @@ namespace QuantConnect.Indicators
     /// is positive, and a negative trend bias is present when the oscillator is negative. AroonUp/Down
     /// values over 75 identify strong trends in their respective direction.
     /// </summary>
-    public class PolarisedFractalEfficiency : BarIndicator, IIndicatorWarmUpPeriodProvider
+    public class PolarisedFractalEfficiency :  WindowIndicator<IndicatorDataPoint>, IIndicatorWarmUpPeriodProvider
     {
         
         public RollingWindow<double> C2C;
@@ -72,7 +72,7 @@ namespace QuantConnect.Indicators
         private Source _source;
         private decimal _alpha;
         public PolarisedFractalEfficiency(string name, Source source, int lookback, int period)
-            : base(name)
+            : base(name, 1)
         {
 			_source = source;
 			xEma = new ExponentialMovingAverage(period);
@@ -89,10 +89,10 @@ namespace QuantConnect.Indicators
         public decimal PrevCycle { get; set;}
         public decimal Cycle { get; set;}
         
-        protected override decimal ComputeNextValue(IBaseDataBar input)
+        protected override decimal ComputeNextValue(IReadOnlyWindow<IndicatorDataPoint> window, IndicatorDataPoint input)
         {
-            var stop =0;
-            var src = GetSource(input);
+        	var stop =0;
+            var src = input.Value;
             if (src == Src.FirstOrDefault())
             {
             	return xEma;
@@ -128,24 +128,6 @@ namespace QuantConnect.Indicators
             }
             return 0;
         }
-		
-		
-		private decimal GetSource(IBaseDataBar input)
-		{
-			switch(_source)
-			{
-				case Source.Close:
-					return input.Close;
-				case Source.HL2:
-					return 0.5m * (input.High+input.Low);
-				case Source.High:
-					return input.High;
-				case Source.Low:
-					return input.Low;
-			}
-			return 0;
-			
-		}
 		
         
         

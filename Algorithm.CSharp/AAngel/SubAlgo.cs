@@ -519,11 +519,11 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
 
 
         //////////////////////////////////////////////////////////////////
-        protected void Plot(string plot, string graph, double value)
+        public void Plot(string plot, string graph, double value)
         {
             Algo.Plot(plot, graph, value);
         }
-        protected void Plot(string plot, string graph, decimal value)
+        public void Plot(string plot, string graph, decimal value)
         {
             Algo.Plot(plot, graph, value);
         }        

@@ -43,7 +43,7 @@ namespace QuantConnect.Indicators
     /// is positive, and a negative trend bias is present when the oscillator is negative. AroonUp/Down
     /// values over 75 identify strong trends in their respective direction.
     /// </summary>
-    public class EhlerInstantaneousTrend : BarIndicator, IIndicatorWarmUpPeriodProvider
+    public class EhlerInstantaneousTrend : WindowIndicator<IndicatorDataPoint>, IIndicatorWarmUpPeriodProvider
     {
         public RollingWindow<decimal> It = new RollingWindow<decimal>(4);
         public RollingWindow<decimal> Src = new RollingWindow<decimal>(4);
@@ -65,8 +65,8 @@ namespace QuantConnect.Indicators
         /// </summary>
         /// <param name="upPeriod">The lookback period to determine the highest high for the AroonDown</param>
         /// <param name="downPeriod">The lookback period to determine the lowest low for the AroonUp</param>
-        public EhlerInstantaneousTrend(Source source=Source.Close, decimal alpha=0.07m)
-            : this($"ECCT({source},{alpha})", source, alpha)
+        public EhlerInstantaneousTrend(decimal alpha=0.07m)
+            : this($"ECCT({alpha})", alpha)
         {
         }
 
@@ -78,8 +78,8 @@ namespace QuantConnect.Indicators
         /// <param name="downPeriod">The lookback period to determine the lowest low for the AroonUp</param>
         private Source _source;
         private decimal _alpha;
-        public EhlerInstantaneousTrend(string name, Source source, decimal alpha=0.07m)
-            : base(name)
+        public EhlerInstantaneousTrend(string name, decimal alpha=0.07m)
+            : base(name, 1)
         {
             // var max = new Maximum(name + "_Max", upPeriod + 1);
             // AroonUp = new FunctionalIndicator<IndicatorDataPoint>(name + "_AroonUp",
@@ -95,7 +95,6 @@ namespace QuantConnect.Indicators
             //     () => min.Reset()
             //     );
 			
-			_source = source;
 			_alpha = alpha;
 			
             WarmUpPeriod = 11;
@@ -109,11 +108,11 @@ namespace QuantConnect.Indicators
         public decimal InstantaneousTrend { get; set;}
         public decimal Lag { get; set;}
         
-        protected override decimal ComputeNextValue(IBaseDataBar input)
+         protected override decimal ComputeNextValue(IReadOnlyWindow<IndicatorDataPoint> window, IndicatorDataPoint input)
         {
             // AroonUp.Update(input.Time, input.High);
             // AroonDown.Update(input.Time, input.Low);
-            var src = GetSource(input);
+            var src = input.Value;
             Src.Add(src);
             
             if(Src.IsReady)

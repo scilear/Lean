@@ -81,7 +81,7 @@ and reduce the quantities in PositionTracked or similarly increase existing posi
             strategyAllocation[algo.Name] = 1m;
             allocTotal -= strategyAllocation[algo.Name];
             
-            /*
+            
             algo = new TMFUPROVarianceOptimisedAlgo(this);
             algos.Add(new SubAlgoValidator(new TMFUPROVarianceOptimisedAlgo(this), 
                 TimeSpan.FromDays(1), 
@@ -96,7 +96,7 @@ and reduce the quantities in PositionTracked or similarly increase existing posi
                     return 0;
                 }));
             strategyAllocation[algo.Name] = allocTotal;
-            */
+            
             foreach (var a in algos)
             {
                 a.Algo.SetCash(CASH);
@@ -171,10 +171,11 @@ and reduce the quantities in PositionTracked or similarly increase existing posi
         {
             foreach (var a in algos)
             {
-                var test = a.Algo.Portfolio.TotalPortfolioValue;
-                Plot(a.Algo.Name, "pnl", a.Algo.Portfolio.TotalPortfolioValue);
-                Plot(a.Algo.Name, "sma", a.GetIndicator("SMA2"));
-                Plot(a.Algo.Name, "sma10", a.GetIndicator("SMA10"));
+            	a.Plot();
+                // var test = a.Algo.Portfolio.TotalPortfolioValue;
+                // Plot(a.Algo.Name, "pnl", a.Algo.Portfolio.TotalPortfolioValue);
+                // Plot(a.Algo.Name, "sma", a.GetIndicator("SMA2"));
+                // Plot(a.Algo.Name, "sma10", a.GetIndicator("SMA10"));
                 //Plot(a.Algo.Name, "PF", Portfolio.TotalPortfolioValue);
                 // var t1 = a.Algo.Test1();
                 // var t2 = ((TMFUPROVarianceOptimisedAlgo)a.Algo).Test1();

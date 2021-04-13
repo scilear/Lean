@@ -32,7 +32,7 @@ namespace QuantConnect.Algorithm.CSharp
 		const int MAX_POS = 10;
 		const int stockPickingPeriod = 400;
 		const int longPeriod = 240;
-		const bool VOL_PROTECT = true;
+		const bool VOL_PROTECT = false;
 		PolarisedFractalEfficiency _pfeStrategy = new PolarisedFractalEfficiency();
 		
 		//Dictionary<string, PolarisedFractalEfficiency> _pfeReference = new Dictionary<string, PolarisedFractalEfficiency>();
@@ -46,6 +46,7 @@ namespace QuantConnect.Algorithm.CSharp
 		
 			//"VXX", "VXX.1", 
 			"TEVA", "TTD", "QQQ", "AAPL", "NFLX", "SHOP", "TSLA", "AMZN", "NVDA", "SPLK",
+			"QQQ"
 			
 			
 			//ECOMM
@@ -93,12 +94,12 @@ namespace QuantConnect.Algorithm.CSharp
             //SetCash(CASH);             //Set Strategy Cash
             //SetStartDate(2018, 3, 1);  //Set Start Date
             
-            if (symbols.Count() > 5)
-            {
-	            //symbols.UnionWith(Universes.SP500);
-	            symbols.UnionWith(Universes.NDX);
-	            symbols.UnionWith(Universes.NDX99);
-            }
+            // if (symbols.Count() > 5)
+            // {
+	           // //symbols.UnionWith(Universes.SP500);
+	           // symbols.UnionWith(Universes.NDX);
+	           // symbols.UnionWith(Universes.NDX99);
+            // }
             
             //SetWarmup(TimeSpan.FromDays(stockPickingPeriod*4));
 
@@ -106,7 +107,7 @@ namespace QuantConnect.Algorithm.CSharp
             if (VOL_PROTECT) AddEquity("VIXM", Resolution.Hour);   
             foreach(var s in symbols)
             {
-	            AddEquity(s, Resolution.Hour).SetLeverage(2);            
+	            AddEquity(s, Resolution.Minute).SetLeverage(2);            
 				
 				pfe[s] = new PolarisedFractalEfficiency();
 				Algo.RegisterIndicator(s, pfe[s], res);
@@ -162,6 +163,7 @@ namespace QuantConnect.Algorithm.CSharp
         		pmonth = Time.Month;
         	}
         	
+			if (Time.Minute != 0) return;
         	
         	foreach(var s in symbols)
             {
@@ -184,9 +186,10 @@ namespace QuantConnect.Algorithm.CSharp
             	
             	
             	
+            	
             	if (eit[s].IsReady)
             	{
-            		if ( Portfolio.ContainsKey(s) && data.Bars.ContainsKey(s))
+            		if ( Securities.ContainsKey(s) && data.Bars.ContainsKey(s))
             		{
 	            		var ratio = 1.0m/MAX_POS;///(symbols.Contains("VXX.1")) ? 1.0/(symbols.Count()-1) : 1.0 / (symbols.Count());
 	            		//if (POS_COUNT >= 10) ratio = 0.1;
@@ -298,7 +301,8 @@ namespace QuantConnect.Algorithm.CSharp
         public override void OnEndOfDay()
         {
         	//Transactions.CancelOpenOrders();
-    		_pfeStrategy.Update(new TradeBar(Time, symbols.FirstOrDefault(), Portfolio.TotalPortfolioValue, Portfolio.TotalPortfolioValue, Portfolio.TotalPortfolioValue, Portfolio.TotalPortfolioValue, Portfolio.TotalPortfolioValue));
+    		//_pfeStrategy.Update(new TradeBar(Time, symbols.FirstOrDefault(), Portfolio.TotalPortfolioValue, Portfolio.TotalPortfolioValue, Portfolio.TotalPortfolioValue, Portfolio.TotalPortfolioValue, Portfolio.TotalPortfolioValue));_pfeStrategy
+    		_pfeStrategy.Update(new IndicatorDataPoint(Time, Portfolio.TotalPortfolioValue));
     		Plot("PFE", "Strategy", _pfeStrategy.Current.Value);
     		
     		if (jitter < 1000)
@@ -348,6 +352,7 @@ namespace QuantConnect.Algorithm.CSharp
 	    		{
 	    			tradableSymbols.Add(s);
 	    		}
+	    			//tradableSymbols.Add("QQQ");
 	    		// tradableSymbols.Add("VXX");
 	    		// tradableSymbols.Add("VXX.1");
     		}
