@@ -75,13 +75,20 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
         public void Plot()
         {
             // var test = a.Algo.Portfolio.TotalPortfolioValue;
-            // Plot(a.Algo.Name, "pnl", a.Algo.Portfolio.TotalPortfolioValue);
+            Algo.Plot($"{Algo.Name}_pnl", "PnL", Algo.Portfolio.TotalPortfolioValue);
+            if (Indicators.ContainsKey("EIT")) Algo.Plot($"{Algo.Name}_pnl", "Lag", ((EhlerInstantaneousTrend)Indicators["EIT"]).Lag);
+            if (Indicators.ContainsKey("EIT")) Algo.Plot($"{Algo.Name}_pnl", "Eit", ((EhlerInstantaneousTrend)Indicators["EIT"]).InstantaneousTrend);
+            if (Indicators.ContainsKey("SMA10")) Algo.Plot($"{Algo.Name}_pnl", "SMA10", ((ExponentialMovingAverage)Indicators["SMA10"]));
+            if (Indicators.ContainsKey("BB")) Algo.Plot($"{Algo.Name}_pnl", "BB+", ((BollingerBands)Indicators["BB"]).UpperBand);
+            if (Indicators.ContainsKey("BB")) Algo.Plot($"{Algo.Name}_pnl", "BB-", ((BollingerBands)Indicators["BB"]).LowerBand);
+            if (Indicators.ContainsKey("RBB")) Algo.Plot($"{Algo.Name}_pnl", "RBB+", ((RollingBB)Indicators["RBB"]).UpperBand);
+            if (Indicators.ContainsKey("RBB")) Algo.Plot($"{Algo.Name}_pnl", "RBB-", ((RollingBB)Indicators["RBB"]).LowerBand);
             // Plot(a.Algo.Name, "sma", a.GetIndicator("SMA2"));
             // Plot(a.Algo.Name, "sma10", a.GetIndicator("SMA10"));
-            foreach (var indic in Indicators)
-            {
-            	Algo.Plot((string)Algo.Name, (string)indic.Value.Name, (decimal)indic.Value.Current.Value);
-            }
+            // foreach (var indic in Indicators)
+            // {
+            // 	Algo.Plot((string)Algo.Name, (string)indic.Value.Name, (decimal)indic.Value.Current.Value);
+            // }
         }
     }
 }

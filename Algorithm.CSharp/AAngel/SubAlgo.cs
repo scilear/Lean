@@ -60,9 +60,13 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
 
         public void SetHoldings(Symbol symbol, decimal weight)
         {
-            var qty = CalculateOrderQuantity(symbol, weight);
-            var tradePrice = (qty > 0) ? Securities[symbol].BidPrice : Securities[symbol].AskPrice;
-            Portfolio.Trade(symbol, qty, tradePrice);
+        	if (Securities[symbol].Exchange.DateTimeIsOpen(Time))
+        	{
+	            var qty = CalculateOrderQuantity(symbol, weight);
+	            var tradePrice = (qty > 0) ? Securities[symbol].BidPrice : Securities[symbol].AskPrice;
+	            Console.WriteLine($"{Time}, {symbol} {qty} @ {tradePrice}");
+	            Portfolio.Trade(symbol, qty, tradePrice);	
+        	}
         }
 
         public List<int> Liquidate(Symbol symbolToLiquidate = null, string tag = "Liquidated")

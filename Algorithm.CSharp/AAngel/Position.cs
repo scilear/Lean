@@ -11,7 +11,7 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
         private decimal averageCost;
         private decimal lastPrice = 0;
         
-        int PositionId = -1;
+        public int PositionId = -1;
 
         
 
@@ -32,6 +32,7 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
 
         internal decimal AddTrade(decimal qty, decimal tradePrice)
         {
+        	qty = Math.Round(qty, 4);
             if (qty == 0) return 0;
             if (Quantity == 0)
             {
@@ -45,7 +46,7 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
 
                 };
                 Changes.Add(change);
-                Quantity = Math.Round(qty, 4);
+                Quantity = qty;
                 averageCost = tradePrice;
             }
             else
@@ -60,13 +61,14 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
                         Type = (replicationIsOn) ? PositionChanges.ChangeType.Increase : PositionChanges.ChangeType.Open,
                         //Symbol = Symbol,
                         QuantityBefore = (replicationIsOn) ? Quantity : 0,
-                        QuantityAfter = Quantity = Math.Round(Quantity+qty, 4),
+                        QuantityAfter = Math.Round(Quantity+qty, 4),
 
                     };
                     Changes.Add(change);
                     
-                    Quantity += qty;
                     averageCost = (averageCost * Quantity + qty * tradePrice) / (Quantity + qty);
+                    Quantity += qty;
+                    
                 }
                 else
                 {
@@ -102,13 +104,13 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
                                 
                                 //Symbol = Symbol,
                                 QuantityBefore = (replicationIsOn) ? Quantity : 0,
-                                QuantityAfter = Quantity = Math.Round(Quantity+qty, 4),
+                                QuantityAfter = Math.Round(Quantity+qty, 4),
 
                             };
                             Changes.Add(change);   
                         }
                         
-                        Quantity += Quantity = Math.Round(qty, 4);
+                        Quantity += qty;
                     }
                 }
             }

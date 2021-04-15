@@ -121,13 +121,10 @@ and reduce the quantities in PositionTracked or similarly increase existing posi
                 var strategyWeight = strategyAllocation[a.Algo.Name]; // TODO fancy logic needed here
                 foreach(var kv in a.Algo.Portfolio.Positions)
                 {
-                    var ratio = a.GetConfidence();
+                    //ratio during warmup is 0 because we want to trigger a weight increase on day 1
+                    var ratio = (IsWarmingUp) ? 0 : a.GetConfidence();
                     var prevRatio = prevConfidence[a.Algo.Name];
                     
-                    if (ratio == 0 && prevRatio == 1)
-                    {
-                    	int stop =1;
-                    }
                     if (ratio != prevRatio)
                         a.Algo.OnStrategyWeightChange(prevRatio, ratio);
                     List<PositionChanges> trades = kv.Value.Changes;
@@ -151,7 +148,15 @@ and reduce the quantities in PositionTracked or similarly increase existing posi
                         {
                             //we probably need to keep the inital ratio here for increase and decrease
                             var changeRatio = (t.Type == PositionChanges.ChangeType.Decrease) ? 1 : ratio;//in case of decrease we don't want it to be ignored
-                            var quantity = t.GetAddedQuantity() * strategyWeight * changeRatio;
+                            
+                            // scaling is required because the underlying non filtered strategy (or no fees/slippage) may become much bigger than the real strategy,
+                            // so each new position requires a proper scaling
+                            var scaling = (t.Type == PositionChanges.ChangeType.Open) ? Portfolio.TotalPortfolioValue / a.Algo.Portfolio.TotalPortfolioValue:
+                            				(a.Algo.Portfolio[kv.Key].RealQuantity != 0) ? 	a.Algo.Portfolio[kv.Key].RealQuantity / a.Algo.Portfolio[kv.Key].Quantity : 0
+                            				;
+                            
+                            
+                            var quantity = t.GetAddedQuantity() * strategyWeight * changeRatio * scaling;
                             var weight = strategyWeight;// TODO not sure what to do with that, does not look to be useful yet (only on cash reallocation maybe
                             if (quantity != 0)// && (kv.Value.RealQuantity != 0 || t.Type == PositionChanges.ChangeType.Open))
                             {
@@ -161,7 +166,7 @@ and reduce the quantities in PositionTracked or similarly increase existing posi
                         }
                     }
                     kv.Value.DoneReplicating();
-                    prevConfidence[a.Algo.Name] = a.GetConfidence();
+                    prevConfidence[a.Algo.Name] = (IsWarmingUp) ? 0 : a.GetConfidence();
                 }
                 //now we do a comparison of the strategy overall value versus the target weight
             }
@@ -180,6 +185,7 @@ and reduce the quantities in PositionTracked or similarly increase existing posi
                 // var t1 = a.Algo.Test1();
                 // var t2 = ((TMFUPROVarianceOptimisedAlgo)a.Algo).Test1();
                 a.Algo.OnEndOfDay();
+                Plot("ConfidenceLevel", a.Algo.Name, a.GetConfidence());
             }
             base.OnEndOfDay();
         }
