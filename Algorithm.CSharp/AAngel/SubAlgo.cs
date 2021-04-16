@@ -64,7 +64,7 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
         	{
 	            var qty = CalculateOrderQuantity(symbol, weight);
 	            var tradePrice = (qty > 0) ? Securities[symbol].BidPrice : Securities[symbol].AskPrice;
-	            Console.WriteLine($"{Time}, {symbol} {qty} @ {tradePrice}");
+	           // Console.WriteLine($"{Time}, {symbol} {qty} @ {tradePrice}");
 	            Portfolio.Trade(symbol, qty, tradePrice);	
         	}
         }

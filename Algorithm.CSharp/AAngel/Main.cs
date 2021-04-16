@@ -15,14 +15,19 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
 		
 			// "VXX",
 			// "VXX.1", 
-			 //"TEVA", "TTD", "QQQ", "AAPL", "NFLX", "SHOP", "TSLA", "AMZN", "NVDA", "SPLK",
+			 "TEVA", "TTD", "QQQ", "AAPL", "NFLX", "SHOP", "TSLA", "AMZN", "NVDA", "SPLK",
 			 
 			 //"AAPL"
 			 
 			 //Buffet
-			 "AMZN", "CVX", "PFE", "ABBV", "GOLD", "JPM", 
-			 "BMY", "DAL", "COST", "MRK", "USG", "IBM", "GE", "BAC", "KO", "KHC", "AXP", "VZ", "USB",
-			 "GM", "BK", "WFC"
+			 //"AMZN", "CVX", "PFE", "ABBV", "GOLD", "JPM", 
+			 //"BMY", "DAL", "COST", "MRK", "USG", "IBM", "GE", "BAC", "KO", "KHC", "AXP", "VZ", "USB",
+			 //"GM", "BK", "WFC"
+			 
+			 // top 2018
+			 //"TRIP", "AMD", "AAP", "ABMD", "FTNT", "HCA", "CMG", "UAA", "ILMN", "MKC"
+			 //"VXX"
+			 //"VXX", "SVXY"
 		};
         public override void Initialize()
         {
@@ -101,7 +106,9 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
 	                        return 1m;
 	                    return 0;
 	                }));
-	            strategyAllocation[algo.Name] = 1m/(symbols.Count);
+
+	            var defaultWeight = 1m / symbols.Count();
+	            _strategyMixer = new DefaultStrategyMixer(defaultWeight);
 	            //strategyAllocation[algo.Name] = 0.5m/(symbols.Count());
 			}
 			            

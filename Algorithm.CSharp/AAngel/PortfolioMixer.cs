@@ -48,7 +48,7 @@ and reduce the quantities in PositionTracked or similarly increase existing posi
 
         private Dictionary<Symbol, decimal> prevConfidence = new Dictionary<Symbol, decimal>();
         
-        private Dictionary<string, decimal> strategyAllocation = new Dictionary<string, decimal>();
+        private IStrategyMixer _strategyMixer = new DefaultStrategyMixer();
         
 /*
 	public override void Initialize()
@@ -77,10 +77,6 @@ and reduce the quantities in PositionTracked or similarly increase existing posi
                     return 0;
                 }));
             
-            var allocTotal = 1m;
-            strategyAllocation[algo.Name] = 1m;
-            allocTotal -= strategyAllocation[algo.Name];
-            
             
             algo = new TMFUPROVarianceOptimisedAlgo(this);
             algos.Add(new SubAlgoValidator(new TMFUPROVarianceOptimisedAlgo(this), 
@@ -95,8 +91,7 @@ and reduce the quantities in PositionTracked or similarly increase existing posi
                         return 1m;
                     return 0;
                 }));
-            strategyAllocation[algo.Name] = allocTotal;
-            
+                        
             foreach (var a in algos)
             {
                 a.Algo.SetCash(CASH);
@@ -109,6 +104,7 @@ and reduce the quantities in PositionTracked or similarly increase existing posi
         
         public void OnData(Slice data)
         {
+            _strategyMixer.Update(this);
             foreach (var a in algos)
             {
                 a.Update();
@@ -117,8 +113,9 @@ and reduce the quantities in PositionTracked or similarly increase existing posi
                 {
                     Console.WriteLine(data[a.Algo.Name].PnL);
                 }
-
-                var strategyWeight = strategyAllocation[a.Algo.Name]; // TODO fancy logic needed here
+                
+                var strategyWeight = _strategyMixer.GetWeight(a.Algo.Name); 
+                
                 foreach(var kv in a.Algo.Portfolio.Positions)
                 {
                     //ratio during warmup is 0 because we want to trigger a weight increase on day 1
@@ -156,7 +153,9 @@ and reduce the quantities in PositionTracked or similarly increase existing posi
                             				;
                             
                             
+                            
                             var quantity = t.GetAddedQuantity() * strategyWeight * changeRatio * scaling;
+                            
                             var weight = strategyWeight;// TODO not sure what to do with that, does not look to be useful yet (only on cash reallocation maybe
                             if (quantity != 0)// && (kv.Value.RealQuantity != 0 || t.Type == PositionChanges.ChangeType.Open))
                             {
@@ -224,6 +223,26 @@ and reduce the quantities in PositionTracked or similarly increase existing posi
                 a.Algo.Portfolio.ProcessSplits(data);
                 a.Algo.OnData(data);
             }
+        }
+    }
+
+    internal class DefaultStrategyMixer : IStrategyMixer
+    {
+        private readonly decimal _weight;
+
+        public DefaultStrategyMixer(decimal weight = 1)
+        {
+            _weight = weight;
+        }
+        
+        public decimal GetWeight(string strategy)
+        {
+            return _weight;
+        }
+
+        public void Update(QCAlgorithm algo)
+        {
+            //throw new NotImplementedException();
         }
     }
 }

@@ -7,11 +7,11 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
 {
     public class SubAlgoValidator
     {
-        DateTime _lastUpdate;
-        TimeSpan TimeSpan;
+        private DateTime _lastUpdate;
+        readonly TimeSpan _timeSpan;
         public SubAlgo Algo { get; private set; }
         public Dictionary<string, IIndicator>  Indicators { get; private set; }
-        private Dictionary<string, decimal>  _previous;
+        private readonly Dictionary<string, decimal>  _previous;
         
         public SubAlgoValidator(SubAlgo algo, TimeSpan timeSpan, 
             Dictionary<string, IIndicator> indicators, 
@@ -19,7 +19,7 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
             bool keepPreviousValues = false)
         {
             Algo = algo;
-            TimeSpan = timeSpan;
+            _timeSpan = timeSpan;
             Indicators = indicators;
             _confidenceFunction = confidenceFunction;
             if (keepPreviousValues)
@@ -34,7 +34,7 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
 
         public void Update()
         {
-            if (_lastUpdate == null || Algo.Time >= _lastUpdate.Add(TimeSpan))
+            if (_lastUpdate == null || Algo.Time >= _lastUpdate.Add(_timeSpan))
             {
                 foreach (var indic in Indicators)
                 {
