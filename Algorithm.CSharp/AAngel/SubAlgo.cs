@@ -521,6 +521,10 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
             Algo.SetObjectStore(objectStore);
         }
 
+        protected void RegisterIndicator(Symbol symbol, IndicatorBase<IndicatorDataPoint> indicator, TimeSpan? resolution = null, Func<IBaseData, decimal> selector = null)
+        {
+            Algo.RegisterIndicator(symbol, indicator, resolution);
+        }
 
         //////////////////////////////////////////////////////////////////
         public void Plot(string plot, string graph, double value)

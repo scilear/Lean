@@ -107,7 +107,7 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
 	                    return 0;
 	                }));
 
-	            var defaultWeight = 1m / symbols.Count();
+	            var defaultWeight = 1m / symbols.Count;
 	            _strategyMixer = new DefaultStrategyMixer(defaultWeight);
 	            //strategyAllocation[algo.Name] = 0.5m/(symbols.Count());
 			}

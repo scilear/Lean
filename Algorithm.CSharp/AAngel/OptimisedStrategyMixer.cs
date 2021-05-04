@@ -19,7 +19,7 @@ namespace QuantConnect.Algorithm.CSharp.AAngel
         /// <param name="algos">list of all algos to be compared</param>
         /// <param name="lookbackPeriod">how far back to we go for relative inspection</param>
         /// <param name="subset">default 0: all algos, else only the top 'subset' algos</param>
-        OptimisedStrategyMixer(List<SubAlgoValidator> algos, int lookbackPeriod, int subset = 0)
+        public OptimisedStrategyMixer(List<SubAlgoValidator> algos, int lookbackPeriod, int subset = 0)
         {
             _algos = algos;
             foreach (var a in _algos)

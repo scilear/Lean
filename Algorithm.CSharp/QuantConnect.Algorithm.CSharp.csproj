@@ -83,7 +83,6 @@
     <Compile Remove="AddRemoveSecurityRegressionAlgorithm.cs" />
     <Compile Remove="AddRiskManagementAlgorithm.cs" />
     <Compile Remove="AddUniverseSelectionModelAlgorithm.cs" />
-    <Compile Remove="AddUniverseSelectionModelCoarseAlgorithm.cs" />
     <Compile Remove="AllShortableSymbolsCoarseSelectionRegressionAlgorithm.cs" />
     <Compile Remove="AutomaticIndicatorWarmupDataTypeRegressionAlgorithm.cs" />
     <Compile Remove="AutomaticIndicatorWarmupRegressionAlgorithm.cs" />
@@ -123,7 +122,6 @@
     <Compile Remove="CBOECustomDataConsolidationRegressionAlgorithm.cs" />
     <Compile Remove="CfdTimeZonesRegressionAlgorithm.cs" />
     <Compile Remove="CoarseFineFundamentalComboAlgorithm.cs" />
-    <Compile Remove="CoarseFineFundamentalRegressionAlgorithm.cs" />
     <Compile Remove="CoarseFineOptionUniverseChainRegressionAlgorithm.cs" />
     <Compile Remove="CoarseFundamentalTop3Algorithm.cs" />
     <Compile Remove="CoarseNoLookAheadBiasAlgorithm.cs" />
