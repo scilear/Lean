@@ -6,6 +6,9 @@
 .venv/
 .lean-home/
 data/
+**/.vscode/
+**/backtests/
+**/__pycache__/
 
 # Object files
 *.o
