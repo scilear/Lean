@@ -1,6 +1,12 @@
 # OS Files
 .DS_Store
 
+# Local Lean CLI workspace state
+.git-local/
+.venv/
+.lean-home/
+data/
+
 # Object files
 *.o
 *.ko
